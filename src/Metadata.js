@@ -28,7 +28,7 @@ export const Metadata = ({data, offsetx, offsety, width, height, superlocColors}
         .range([0, width - 2*padding]);
 
     return (
-        <div>
+        <div className='metadata-container' width={width}>
             {data.metadata.map(d => {
                 console.log(superlocColors, d)
                 return (

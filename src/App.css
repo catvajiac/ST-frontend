@@ -81,6 +81,10 @@ body {
       align-items: center;
   }
 
+  .metadata-container {
+      display: inline-block;
+  }
+
   svg {
       margin: 0;
       padding: 0;
