@@ -5,13 +5,8 @@ import { useTopoData } from './useTopoData';
 import { Metadata } from './Metadata';
 
 import { schemeTableau10 } from 'd3';
-import { useState } from 'react';
 
 // dummy data for now: eventually connect to real backend
-const group_index='2';
-const num_superlocs='3';
-const num_metadata='4';
-
 const dummyData = {
     group_index: '2',
     superlocs: [{
@@ -100,9 +95,9 @@ const App = () => {
     return (
         <>
             <NavBar
-                group_index={group_index}
-                num_superlocs={num_superlocs}
-                num_metadata={num_metadata}
+                group_index={dummyData.group_index}
+                num_superlocs={dummyData.superlocs.length}
+                num_metadata={dummyData.metadata.length}
             />
 
             <Map 

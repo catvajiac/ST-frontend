@@ -1,10 +1,10 @@
-import { geoNaturalEarth1, geoAlbersUsa, geoPath, geoGraticule, schemeTableau10} from 'd3';
-import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+import { geoAlbersUsa, geoPath, geoGraticule } from 'd3';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import ReactTooltip from 'react-tooltip';
 
-export const Map = ({topodata, data, offsetx, offsety, width, height, superlocColors}) => {
+export const Map = ({topodata, data, width, height, superlocColors}) => {
 
-    const geostuff = {
+    const dummyGeoData = {
         "type": "FeatureCollection",
         "features": [{
             "type": "Feature",
@@ -25,7 +25,7 @@ export const Map = ({topodata, data, offsetx, offsety, width, height, superlocCo
 
     const { land, interiors } = topodata;
     const projection = geoAlbersUsa()
-        .fitSize([width, height], geostuff)
+        .fitSize([width, height], dummyGeoData)
 
     const path = geoPath(projection);
     const graticule = geoGraticule();
@@ -62,21 +62,15 @@ export const Map = ({topodata, data, offsetx, offsety, width, height, superlocCo
             return {left: 0, top: 0}
         }
 
-        //console.log(x, circletoSVGRect.left, SVGtoDOMRect.left)
-        //console.log(y, circletoSVGRect.right, SVGtoDOMRect.right)
-
         return {left: circletoSVGRect.left - SVGtoDOMRect.left, top: circletoSVGRect.top - SVGtoDOMRect.top}
         //const { a, b, c, d, e, f } = SVGtoDOMRect;
         //return {left: a * x + c * y + e, top: b * x + d * y + f}
-        return {left: x - SVGtoDOMRect.left, top: y - SVGtoDOMRect.top}
-
     }
 
 
     return (
         <div width={width} height={height}>
         <ReactTooltip id={tooltipId} overridePosition={(pos, currentEvent, currentTarget) => {
-            //console.log(pos, currentTarget.cx.baseVal.value, currentTarget.cy.baseVal.value);
             //return convertSVGtoDOM(currentTarget.cx.baseVal.value, currentTarget.cy.baseVal.value)
             return pos;
         }}/>
@@ -96,7 +90,14 @@ export const Map = ({topodata, data, offsetx, offsety, width, height, superlocCo
             const screen_coords = tooltipData.pos;
           return (
               <>
-                <circle data-tip={tooltipData.text} data-for={tooltipId} ref={circleRef} cx={cx} cy={cy} r={11} fill={superlocColors[d.id]}
+                <circle
+                    data-tip={tooltipData.text}
+                    data-for={tooltipId}
+                    ref={circleRef}
+                    cx={cx}
+                    cy={cy}
+                    r={11}
+                    fill={superlocColors[d.id]}
                     onMouseEnter={() => setTooltipData({text: 'Superlocation: ' + d.name, pos: screen_coords})}
                     onMouseLeave={() => setTooltipData({text: '', pos: {left: 0, top: 0}})}/>
             </>
