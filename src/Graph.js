@@ -1,4 +1,4 @@
-import { forceSimulation, forceManyBody, forceLink, forceCenter } from 'd3';
+import { forceSimulation, forceManyBody, forceLink, forceCenter, linkHorizontal } from 'd3';
 import { useState, useEffect} from 'react';
 
 export const Graph = ({ data, width, height, superlocColors, clickedMetadata }) => {
@@ -11,6 +11,7 @@ export const Graph = ({ data, width, height, superlocColors, clickedMetadata }) 
     const [animatedLinks, setAnimatedLinks] = useState(links);
 
     console.log(clickedMetadata);
+
 
     useEffect(() => {
         const simulation = forceSimulation(nodes)
@@ -30,24 +31,30 @@ export const Graph = ({ data, width, height, superlocColors, clickedMetadata }) 
 
     return <svg width={width} height={height}>
         <g transform={`translate(${width / 2},${height / 2})`}>
-            {animatedLinks.map((link) => {
+            {links.map((link) => {
+                const opacity = !clickedMetadata || clickedMetadata.includes(link.source.id) && clickedMetadata.includes(link.target.id) ? 1 : 0.1;
                 return <line
                     className='graph-link'
                     x1={link.source.x}
                     x2={link.target.x}
                     y1={link.source.y}
                     y2={link.target.y}
+                    opacity={opacity}
                 />
             })}
-            {animatedNodes.map((node) => (
+            {animatedNodes.map((node) => {
+                const opacity = !clickedMetadata || clickedMetadata.includes(node.id) ? 1 : 0.2;
+                return (
                 <circle 
                     cx={node.x}
                     cy={node.y}
+                    opacity={opacity}
                     r={10}
                     key={node.index}
                     fill={superlocColors[node.id]}
                 />
-            ))}
+                )
+            })}
         </g>
     </svg>
 }

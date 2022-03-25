@@ -30,13 +30,9 @@ export const Metadata = ({data, width, height, superlocColors, clickedMetadata, 
         })
     });
 
-    console.log(min(dates), max(dates));
-
     const scale = scaleTime()
         .domain([min(dates), max(dates)])
         .range([0, svgWidth - padding*2]);
-
-    console.log(clickedMetadata)
 
     return (
         <div className='metadata-container' width={width} height={height}>
@@ -50,17 +46,15 @@ export const Metadata = ({data, width, height, superlocColors, clickedMetadata, 
                         width={width}
                         height={4*markerHeight}
                         onClick={() => {
-                            console.log(clickedMetadata);
                             if (clickedMetadata && isClicked) {
                                 setClickedMetadata(null);
                                 return;
                             }
                             const sources = d.trajectory.reduce((prev, curr) => {
-                                prev.push(curr.source);
+                                prev.push(curr.source.id);
                                 return prev;
                             }, []);
                             sources.name = d.name;
-                            console.log('sources', sources)
                             setClickedMetadata(sources);
                         }}
                     >
@@ -90,7 +84,8 @@ export const Metadata = ({data, width, height, superlocColors, clickedMetadata, 
                                 y2={markerHeight*2}
                             />
                             {d.trajectory.map((trajectory) => {
-                                const trajectory_name = data.superlocs.find(d => d.id === trajectory.source).name;
+                                const source_id = typeof trajectory.source.id !== 'undefined' ? trajectory.source.id : trajectory.source;
+                                const trajectory_name = typeof source_id !== 'undefined' ? data.superlocs.find(dat => dat.id === source_id).name : '';
                             return (
                             <circle
                                 data-tip={tooltipStr}
@@ -98,7 +93,7 @@ export const Metadata = ({data, width, height, superlocColors, clickedMetadata, 
                                 cx={scale(trajectory.source_date) + padding}
                                 cy={markerHeight*2}
                                 r={markerHeight}
-                                fill={superlocColors[trajectory.source]}
+                                fill={superlocColors[source_id]}
                                 onMouseEnter={() => setTooltipStr(formatTooltipStr(trajectory_name, trajectory.source_date))}
                                 onMouseLeave={() => setTooltipStr('')}
                             />

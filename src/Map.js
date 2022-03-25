@@ -36,7 +36,6 @@ export const Map = ({topodata, data, width, height, superlocColors, clickedMetad
 
      useEffect(() => ReactTooltip.rebuild(), [tooltipData.text]);
 
-
      const svgRef = useCallback(node => {
          if (!node) {
              return;
