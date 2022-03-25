@@ -70,23 +70,30 @@ body {
     fill: #137B80;
 }
 
-.axis-label, .axis-label line {
+.axis-label path, .axis-label line {
     stroke: #635F5D;
-    stroke-width: 2px;
 }
 
 .axis-label text {
-    font-size: 2;
+    stroke-width: 1px;
+    font-size: 14px;
 }
-  
 
 .metadata-group {
       display: flex;
       align-items: center;
 }
 
+.metadata-group:hover {
+    cursor: pointer;
+}
+
 .metadata-container {
       display: inline-block;
+}
+
+.metadata-line {
+    overflow: 'visible';
 }
 
 svg {
@@ -108,6 +115,11 @@ html, body {
 .__react_component_tooltip.show {
     visibility: visible;
     opacity: 1 !important;
+}
+
+
+.graph-link {
+    stroke: #635F5D;
 }
 
 
