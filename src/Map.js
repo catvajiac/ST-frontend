@@ -2,7 +2,7 @@ import { geoAlbersUsa, geoPath, geoGraticule } from 'd3';
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import ReactTooltip from 'react-tooltip';
 
-export const Map = ({topodata, data, width, height, superlocColors}) => {
+export const Map = ({topodata, data, width, height, superlocColors, clickedMetadata }) => {
 
     const dummyGeoData = {
         "type": "FeatureCollection",
@@ -21,7 +21,6 @@ export const Map = ({topodata, data, width, height, superlocColors}) => {
             }
         }]
     }
-
 
     const { land, interiors } = topodata;
     const projection = geoAlbersUsa()
@@ -88,6 +87,7 @@ export const Map = ({topodata, data, width, height, superlocColors}) => {
         {data.superlocs.map(d => {
             const [cx, cy] = projection(d.coords);
             const screen_coords = tooltipData.pos;
+            const opacity = !clickedMetadata || clickedMetadata.includes(d.id) ? 1 : 0.2;
           return (
               <>
                 <circle
@@ -98,6 +98,7 @@ export const Map = ({topodata, data, width, height, superlocColors}) => {
                     cy={cy}
                     r={11}
                     fill={superlocColors[d.id]}
+                    opacity={opacity}
                     onMouseEnter={() => setTooltipData({text: 'Superlocation: ' + d.name, pos: screen_coords})}
                     onMouseLeave={() => setTooltipData({text: '', pos: {left: 0, top: 0}})}/>
             </>

@@ -13,13 +13,15 @@ const formatTooltipStr = (name, date) => {
 };
 
 
-export const Metadata = ({data, width, height, superlocColors}) => {
+export const Metadata = ({data, width, height, superlocColors, clickedMetadata, setClickedMetadata }) => {
     const markerHeight = 10;
     const padding = 10; // will be added to left and right
     const tooltipId = 'metadata-tooltip';
     const [tooltipStr, setTooltipStr] = useState('');
 
     const buttonWidth = width / 5;
+    const svgWidth = width - buttonWidth - padding * 2;
+    const svgInnerWidth = svgWidth - padding*2;
 
     var dates = [];
     data.metadata.map((d) => {
@@ -28,34 +30,62 @@ export const Metadata = ({data, width, height, superlocColors}) => {
         })
     });
 
+    console.log(min(dates), max(dates));
+
     const scale = scaleTime()
         .domain([min(dates), max(dates)])
-        .range([0, width - 2*padding]);
+        .range([0, svgWidth - padding*2]);
+
+    console.log(clickedMetadata)
 
     return (
         <div className='metadata-container' width={width} height={height}>
             {data.metadata.map(d => {
-                console.log(superlocColors, d)
+                const isClicked = !clickedMetadata || clickedMetadata.name === d.name;
+                const opacity = isClicked ? 1 : 0.2;
+                const fontWeight = isClicked ? 800 : 400;
                 return (
                     <div
                         className='metadata-group'
                         width={width}
                         height={4*markerHeight}
-                        onClick={() => console.log('clicked a div', d)}
+                        onClick={() => {
+                            console.log(clickedMetadata);
+                            if (clickedMetadata && isClicked) {
+                                setClickedMetadata(null);
+                                return;
+                            }
+                            const sources = d.trajectory.reduce((prev, curr) => {
+                                prev.push(curr.source);
+                                return prev;
+                            }, []);
+                            sources.name = d.name;
+                            console.log('sources', sources)
+                            setClickedMetadata(sources);
+                        }}
                     >
                         <ReactTooltip id={tooltipId} />
                         <ButtonGroup fill style={{width: buttonWidth}}>
-                            <Button className='metadata-button' text={d.name} />
+                            <Button
+                                className='metadata-button'
+                                text={d.name}
+                                fontWeight={fontWeight}
+                                data-tip={tooltipStr}
+                                data-for={tooltipId}
+                                onMouseEnter={() => setTooltipStr(d.type)}
+                                onMouseLeave={() => setTooltipStr('')}
+                            />
                         </ButtonGroup>
                         <svg
                             className='metadata-line'
-                            width={width - buttonWidth - padding/2}
+                            width={svgWidth}
                             height={markerHeight*4}
+                            opacity={opacity}
                         >
                             <line
                                 stroke='#dadada'
-                                x1={0}
-                                x2={width}
+                                x1={padding}
+                                x2={svgInnerWidth}
                                 y1={markerHeight*2}
                                 y2={markerHeight*2}
                             />
@@ -80,8 +110,8 @@ export const Metadata = ({data, width, height, superlocColors}) => {
             })}
             <AxisBottom
                 scale={scale}
-                offsetx={buttonWidth}
-                width={width - buttonWidth - 5}
+                offsetx={buttonWidth + padding}
+                width={width}
                 height={markerHeight*4}
             />
         </div>

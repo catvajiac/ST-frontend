@@ -1,10 +1,12 @@
-import './App.css';
-import { NavBar } from './NavBar';
-import { Map } from './Map';
-import { useTopoData } from './useTopoData';
-import { Metadata } from './Metadata';
-
 import { schemeTableau10 } from 'd3';
+import { useState } from 'react';
+
+import './App.css';
+import { Graph } from './Graph';
+import { Map } from './Map';
+import { Metadata } from './Metadata';
+import { NavBar } from './NavBar';
+import { useTopoData } from './useTopoData';
 
 // dummy data for now: eventually connect to real backend
 const dummyData = {
@@ -12,27 +14,27 @@ const dummyData = {
     superlocs: [{
         name: 'Los Angeles, CA',
         coords: [-118.2437, 34.0522],
-        id: 1
+        id: 0
     }, {
         name: 'Austin, TX',
         coords: [-97.7431, 30.2672],
-        id: 2
+        id: 1
     }, {
         name: 'Chicago, IL',
         coords: [-87.6298, 41.8781], 
-        id: 3
+        id: 2
     }],
     metadata: [{
         name: '123-456-7890',
         type: 'phone',
         trajectory: [{
-            source: 1, 
-            target: 2,
+            source: 0, 
+            target: 1,
             source_date: new Date('Jan 1 2021'),
             target_date: new Date('Jan 2 2021')
         }, {
-            source: 2,
-            target: 3,
+            source: 1,
+            target: 2,
             source_date: new Date('Jan 2 2021'),
             target_date: new Date('Jan 2 2021')
         }]
@@ -40,18 +42,18 @@ const dummyData = {
         name: '234-567-8901',
         type: 'phone',
         trajectory: [{
-            source: 1,
-            target: 2,
+            source: 0,
+            target: 1,
             source_date: new Date('Jan 2 2021'),
             target_date: new Date('Jan 3 2021')
         }, {
-            source: 2,
-            target: 3,
+            source: 1,
+            target: 2,
             source_date: new Date('Jan 3 2021'),
             target_date: new Date('Jan 4 2021')
         }, {
-            source: 3,
-            target: 2,
+            source: 2,
+            target: 1,
             source_date: new Date('Jan 4 2021'),
             target_date: new Date('Jan 5 2021')
         }]
@@ -59,18 +61,18 @@ const dummyData = {
         name: '345-678-9012',
         type: 'phone',
         trajectory: [{
-            source: 1,
-            target: 2,
+            source: 0,
+            target: 1,
             source_date: new Date('Jan 3 2021'),
             target_date: new Date('Jan 4 2021'),
         }, {
-            source: 2,
-            target: 3,
+            source: 1,
+            target: 2,
             source_date: new Date('Jan 4 2021'),
             target_date: new Date('Jan 5 2021')
         }, {
-            source: 3,
-            target: 2,
+            source: 2,
+            target: 1,
             source_date: new Date('Jan 5 2021'),
             target_date: new Date('Jan 6 2021')
         }]
@@ -82,6 +84,7 @@ const height = window.innerHeight;
 
 const App = () => {
     const topodata = useTopoData();
+    const [clickedMetadata, setClickedMetadata] = useState();
 
     if (!topodata) {
         return <>Loading...</>
@@ -100,6 +103,14 @@ const App = () => {
                 num_metadata={dummyData.metadata.length}
             />
 
+            <Graph
+                data={dummyData}
+                superlocColors={superlocColors}
+                width={width/3}
+                height={height/3}
+                clickedMetadata={clickedMetadata}
+            />
+
             <Map 
                 topodata={topodata}
                 data={dummyData}
@@ -108,6 +119,7 @@ const App = () => {
                 width={width/3}
                 height={height/3}
                 superlocColors={superlocColors}
+                clickedMetadata={clickedMetadata}
             />
 
             <Metadata
@@ -117,6 +129,8 @@ const App = () => {
                 width={width/3}
                 height={height/3}
                 superlocColors={superlocColors}
+                clickedMetadata={clickedMetadata}
+                setClickedMetadata={setClickedMetadata}
             />
         </>
     )
